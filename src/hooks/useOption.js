@@ -1,40 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useAppContext } from "./useAppContext";
+import { useCallback, useState } from "react";
+import { useAppContext } from ".";
 
 export function useOption(groupID, optionID, chatID) {
   const context = useAppContext();
 
-  const [value, setValue] = useState("chat");
-  const [version, setVersion] = useState(0);
-
-  const timer = useRef();
-
-  // const onUpdate = useCallback(
-  //   (updatedGroupID) => {
-  //     if (groupID === updatedGroupID) {
-  //       setValue(
-  //         context.chat.options.getValidatedOption(groupID, optionID, chatID)
-  //       );
-  //       setVersion((v) => v + 1);
-  //     } else {
-  //       clearTimeout(timer.current);
-  //       timer.current = setTimeout(() => {
-  //         setValue(
-  //           context.chat.options.getValidatedOption(groupID, optionID, chatID)
-  //         );
-  //         setVersion((v) => v + 1);
-  //       }, 500);
-  //     }
-  //   },
-  //   [groupID, optionID, chatID]
-  // );
-
-  // useEffect(() => {
-  //   context.chat.on("plugin-options-update", onUpdate);
-  //   return () => {
-  //     context.chat.off("plugin-options-update", onUpdate);
-  //   };
-  // }, [chatID, onUpdate]);
+  const [value, setValue] = useState(
+    context.chat.options.getValidatedOption(groupID, optionID, chatID)
+  );
 
   const setOptionValue = useCallback(
     (value) => {
@@ -43,9 +15,7 @@ export function useOption(groupID, optionID, chatID) {
     [groupID, optionID, chatID]
   );
 
-  const option = {
-    renderProps: {},
-  };
+  const option = context.chat.options.findOption(groupID, optionID);
 
   return [
     value,
@@ -53,6 +23,5 @@ export function useOption(groupID, optionID, chatID) {
     typeof option.renderProps === "function"
       ? option.renderProps(value, context.chat.options, context)
       : option.renderProps,
-    version,
   ];
 }

@@ -31,7 +31,7 @@ export const inputOptions = {
   options: [
     {
       id: "submit-on-enter",
-      defaultValue: true,
+      defaultValue: false,
       displayOnSettingsScreen: "ui",
       displayAsSeparateSection: false,
       displayInQuickSettings: {

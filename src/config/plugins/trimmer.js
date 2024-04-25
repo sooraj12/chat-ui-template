@@ -28,26 +28,6 @@ export class ContextTrimmerPlugin {
             label: (value) => `Max tokens: ${value}`,
           },
         },
-        {
-          id: "preserveSystemPrompt",
-          displayOnSettingsScreen: "chat",
-          defaultValue: true,
-          scope: "chat",
-          renderProps: {
-            label: "Try to always include the System Prompt",
-            type: "checkbox",
-          },
-        },
-        {
-          id: "preserveFirstUserMessage",
-          displayOnSettingsScreen: "chat",
-          defaultValue: true,
-          scope: "chat",
-          renderProps: {
-            label: "Try to always include your first message",
-            type: "checkbox",
-          },
-        },
       ],
     };
   }

@@ -142,7 +142,7 @@ function Header({ title }) {
           transitionDuration={0}
         />
       )}
-      {context.isHome && <h2>RAGChat: LLAMA3</h2>}
+      {context.isHome && <h2>RAGChat - {context.llmName}</h2>}
       <div className="spacer" />
       <HeaderButton icon="search" onClick={spotlight.openSpotlight} />
       <HeaderButton icon="gear" onClick={openSettings} />

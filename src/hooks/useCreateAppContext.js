@@ -2,14 +2,15 @@ import { useCallback, useMemo, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import { useChat } from "./useChat";
+import { ChatManager } from "../core/chatManager";
 
-const chatManager = {};
+const chatManager = new ChatManager();
 
 function useCreatAppContext() {
   const { id: _id } = useParams();
   const [nextID, setNextID] = useState(uuidv4());
   const id = _id !== null && _id !== undefined ? _id : nextID;
-  const llmName = "LLAMA3";
+  const llmName = "LLAMA3:70b";
 
   const { pathname } = useLocation();
   const isHome = pathname === "/";
@@ -43,7 +44,6 @@ function useCreatAppContext() {
         },
         parentID: currentChat.leaf?.id,
       });
-      // }
 
       return id;
     },
