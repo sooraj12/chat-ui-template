@@ -11,12 +11,12 @@ import {
   TextInput,
   Textarea,
 } from "@mantine/core";
-import { selectSettingsOption } from "../store/settings";
-import { useAppSelector } from "../store";
 import { useAppContext, useOption } from "../hooks";
 import { SettingsOption } from "./SettingsOption";
 import { globalOptions } from "../config/globalOptions";
 import { pluginMetadata } from "../config/plugins/metadata";
+import { useGlobalStore } from "../store/useGlobalStore";
+import { useShallow } from "zustand/react/shallow";
 
 const Settings = styled.div`
   font-family: "Work Sans", sans-serif;
@@ -93,7 +93,11 @@ const OptionWrapper = styled.div`
 `;
 
 function PluginOptionWidget({ pluginID, option, chatID, context }) {
-  const requestedOption = useAppSelector(selectSettingsOption);
+  const { requestedOption } = useGlobalStore(
+    useShallow((state) => ({
+      requestedOption: state.settings.option,
+    }))
+  );
 
   const [_value, setValue, renderProps] = useOption(
     pluginID,

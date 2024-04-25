@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
 import { Button } from "@mantine/core";
 import { useAppContext, useOption } from "../hooks";
-import { useAppDispatch } from "../store";
-import { setTabAndOption } from "../store/settings";
 import { useCallback } from "react";
+import { useGlobalStore } from "../store/useGlobalStore";
+import { useShallow } from "zustand/react/shallow";
 
 const Container = styled.div`
   margin: 0.5rem -0.5rem;
@@ -26,18 +26,18 @@ const Container = styled.div`
 
 export function QuickSettingsButton({ groupID, option }) {
   const context = useAppContext();
-  const dispatch = useAppDispatch();
+
+  const { setTabAndOption } = useGlobalStore(
+    useShallow((state) => ({
+      setTabAndOption: state.settings.setTabAndOption,
+    }))
+  );
 
   const [value] = useOption(groupID, option.id, context.id || undefined);
 
   const onClick = useCallback(() => {
-    dispatch(
-      setTabAndOption({
-        tab: option.displayOnSettingsScreen,
-        option: option.id,
-      })
-    );
-  }, [option.id, dispatch, option.displayOnSettingsScreen]);
+    setTabAndOption(option.displayOnSettingsScreen, option.id);
+  }, [option.id, option.displayOnSettingsScreen, setTabAndOption]);
 
   const labelBuilder = option.displayInQuickSettings?.label;
   let label = option.id;

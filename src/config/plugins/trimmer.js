@@ -9,22 +9,22 @@ export class ContextTrimmerPlugin {
         {
           id: "maxTokens",
           displayOnSettingsScreen: "chat",
-          defaultValue: 2048,
+          defaultValue: 8000,
           scope: "chat",
           renderProps: (value, options) => ({
             label: `Include a maximum of ${value} tokens`,
             type: "slider",
             min: 512,
-            max: 2048,
+            max: 16000,
             step: 64,
           }),
           validate: (value, options) => {
-            const max = 2048;
+            const max = 16000;
             return value <= max;
           },
           displayInQuickSettings: {
             name: "Max Tokens",
-            displayByDefault: false,
+            displayByDefault: true,
             label: (value) => `Max tokens: ${value}`,
           },
         },

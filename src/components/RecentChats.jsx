@@ -1,13 +1,9 @@
 import styled from "@emotion/styled";
 import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import { useAppContext } from "../../core/context";
-// import { useAppDispatch } from "../../store";
-// import { toggleSidebar } from "../../store/sidebar";
 import { ActionIcon, Button, Loader, Menu, Textarea } from "@mantine/core";
 import { useModals } from "@mantine/modals";
 import { useAppContext } from "../hooks";
-import { useAppDispatch } from "../store";
 
 const Container = styled.div`
   margin: calc(1.618rem - 1rem);
@@ -219,7 +215,6 @@ function ChatListItem({ chat, onClick, selected }) {
 
 function RecentChats() {
   const context = useAppContext();
-  const dispatch = useAppDispatch();
 
   const currentChatID = context.currentChat.chat?.id;
   // const recentChats = context.chat.searchChats("");

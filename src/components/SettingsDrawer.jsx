@@ -5,13 +5,8 @@ import { useCallback, useEffect } from "react";
 import { UserOptionsTab } from "./UserOptionsTab";
 import { ChatOptionsTab } from "./ChatOptionsTab";
 import { UIPreferencesTab } from "./UIPreferencesTab";
-import { useAppDispatch, useAppSelector } from "../store";
-import {
-  closeSettingsUI,
-  selectSettingsOption,
-  selectSettingsTab,
-  setTab,
-} from "../store/settings";
+import { useGlobalStore } from "../store/useGlobalStore";
+import { useShallow } from "zustand/react/shallow";
 
 const Container = styled.div`
   padding: 0.4rem 1rem 1rem 1rem;
@@ -76,13 +71,19 @@ const Container = styled.div`
 `;
 
 function SettingsDrawer() {
-  const tab = useAppSelector(selectSettingsTab);
-  const option = useAppSelector(selectSettingsOption);
+  const { closeSettingsUI, setTab, tab, option } = useGlobalStore(
+    useShallow((state) => ({
+      closeSettingsUI: state.settings.closeSettingsUI,
+      setTab: state.settings.setTab,
+      tab: state.settings.tab,
+      option: state.settings.option,
+    }))
+  );
+
   const small = useMediaQuery("(max-width: 40em)");
 
-  const dispatch = useAppDispatch();
-  const close = useCallback(() => dispatch(closeSettingsUI()), [dispatch]);
-  const onTabChange = useCallback((tab) => dispatch(setTab(tab)), [dispatch]);
+  const close = useCallback(() => closeSettingsUI(), [closeSettingsUI]);
+  const onTabChange = useCallback((tab) => setTab(tab), [setTab]);
 
   useEffect(() => {
     setTimeout(() => {

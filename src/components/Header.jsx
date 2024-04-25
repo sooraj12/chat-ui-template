@@ -4,11 +4,10 @@ import styled from "@emotion/styled";
 import { Burger, Button } from "@mantine/core";
 import { useAppContext } from "../hooks";
 import { useSpotlight } from "@mantine/spotlight";
-import { useAppDispatch, useAppSelector } from "../store";
-import { selectSidebarOpen, toggleSidebar } from "../store/sidebar";
-import { setTab } from "../store/settings";
 import { useNavigate } from "react-router-dom";
 import { useHotkeys } from "@mantine/hooks";
+import { useGlobalStore } from "../store/useGlobalStore";
+import { useShallow } from "zustand/react/shallow";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -102,14 +101,16 @@ function Header({ title }) {
   const navigate = useNavigate();
   const spotlight = useSpotlight();
   const [loading, setLoading] = useState(false);
-  const dispatch = useAppDispatch();
 
-  const sidebarOpen = useAppSelector(selectSidebarOpen);
-
-  const onBurgerClick = useCallback(
-    () => dispatch(toggleSidebar()),
-    [dispatch]
+  const { sidebarOpen, toggleSidebar, setTab } = useGlobalStore(
+    useShallow((state) => ({
+      sidebarOpen: state.sidebar.open,
+      toggleSidebar: state.sidebar.toggleSidebar,
+      setTab: state.settings.setTab,
+    }))
   );
+
+  const onBurgerClick = useCallback(() => toggleSidebar(), [toggleSidebar]);
 
   const burgerLabel = sidebarOpen ? "Close sidebar" : "Open sidebar";
 
@@ -121,8 +122,8 @@ function Header({ title }) {
   }, [navigate]);
 
   const openSettings = useCallback(() => {
-    dispatch(setTab("chat"));
-  }, [dispatch]);
+    setTab("chat");
+  }, [setTab]);
 
   useHotkeys([["c", onNewChat]]);
 

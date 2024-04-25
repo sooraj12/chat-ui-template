@@ -3,11 +3,10 @@ import { Button, ActionIcon, Textarea, Loader } from "@mantine/core";
 import { getHotkeyHandler, useHotkeys, useMediaQuery } from "@mantine/hooks";
 import { useCallback, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../store";
-import { selectMessage, setMessage } from "../store/message";
 import { useAppContext, useOption } from "../hooks";
-import { selectSettingsTab } from "../store/settings";
 import { QuickSettings } from "./QuickSettings";
+import { useGlobalStore } from "../store/useGlobalStore";
+import { useShallow } from "zustand/react/shallow";
 
 const Container = styled.div`
   background: #292933;
@@ -28,23 +27,27 @@ const Container = styled.div`
 `;
 
 function MessageInput(props) {
-  const message = useAppSelector(selectMessage);
+  const { setMessage, message, tab } = useGlobalStore(
+    useShallow((state) => ({
+      setMessage: state.message.setMessage,
+      message: state.message.msg,
+      tab: state.settings.tab,
+    }))
+  );
+
   const hasVerticalSpace = useMediaQuery("(min-height: 1000px)");
 
   const navigate = useNavigate();
   const context = useAppContext();
-  const dispatch = useAppDispatch();
   const location = useLocation();
-
-  const tab = useAppSelector(selectSettingsTab);
 
   const [submitOnEnter] = useOption("input", "submit-on-enter");
 
   const onChange = useCallback(
     (e) => {
-      dispatch(setMessage(e.target.value));
+      setMessage(e.target.value);
     },
-    [dispatch]
+    [setMessage]
   );
 
   const pathname = useLocation().pathname;
@@ -56,9 +59,9 @@ function MessageInput(props) {
       if (!location.pathname.includes(id)) {
         navigate("/chat/" + id);
       }
-      dispatch(setMessage(""));
+      setMessage("");
     }
-  }, [context, message, dispatch, navigate, location.pathname]);
+  }, [context, message, navigate, location.pathname, setMessage]);
 
   useHotkeys([["n", () => document.querySelector("#message-input")?.focus()]]);
 

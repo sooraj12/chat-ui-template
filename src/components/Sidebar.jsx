@@ -3,9 +3,8 @@ import { ActionIcon, Avatar, Burger, Menu } from "@mantine/core";
 import { useElementSize } from "@mantine/hooks";
 import { useCallback } from "react";
 import { RecentChats } from "./RecentChats";
-import { useAppDispatch, useAppSelector } from "../store";
-import { selectSidebarOpen, toggleSidebar } from "../store/sidebar";
-import { setTab } from "../store/settings";
+import { useGlobalStore } from "../store/useGlobalStore";
+import { useShallow } from "zustand/react/shallow";
 
 const Container = styled.div`
   display: flex;
@@ -98,13 +97,15 @@ const Container = styled.div`
 `;
 
 function Sidebar() {
-  const dispatch = useAppDispatch();
-  const sidebarOpen = useAppSelector(selectSidebarOpen);
-
-  const onBurgerClick = useCallback(
-    () => dispatch(toggleSidebar()),
-    [dispatch]
+  const { sidebarOpen, toggleSidebar, setTab } = useGlobalStore(
+    useShallow((state) => ({
+      sidebarOpen: state.sidebar.open,
+      toggleSidebar: state.sidebar.toggleSidebar,
+      setTab: state.settings.setTab,
+    }))
   );
+
+  const onBurgerClick = useCallback(() => toggleSidebar(), [toggleSidebar]);
 
   const { ref, width } = useElementSize();
 
@@ -141,7 +142,7 @@ function Sidebar() {
         <Menu.Dropdown>
           <Menu.Item
             onClick={() => {
-              dispatch(setTab("user"));
+              setTab("user");
             }}
             icon={<i className="fas fa-gear" />}
           >

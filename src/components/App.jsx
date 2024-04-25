@@ -1,10 +1,8 @@
 import React from "react";
 import { MantineProvider } from "@mantine/core";
 import { ModalsProvider } from "@mantine/modals";
-import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AppContextProvider } from "../context/AppContext";
-import { store } from "../store";
 
 import { ChatPage } from "./pages/ChatPage";
 import { LandingPage } from "./pages/LandingPage";
@@ -35,11 +33,9 @@ function App() {
       withGlobalStyles
       withNormalizeCSS
     >
-      <Provider store={store}>
-        <ModalsProvider>
-          <RouterProvider router={router} />
-        </ModalsProvider>
-      </Provider>
+      <ModalsProvider>
+        <RouterProvider router={router} />
+      </ModalsProvider>
     </MantineProvider>
   );
 }

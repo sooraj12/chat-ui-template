@@ -1,27 +1,25 @@
-import { createSlice } from "@reduxjs/toolkit";
+const sidebarStore = (set) => ({
+  sidebar: {
+    open: false,
 
-const initialState = {
-  open: false,
-};
+    openSidebar() {
+      set((state) => {
+        state.sidebar.open = true;
+      });
+    },
 
-export const uiSlice = createSlice({
-  name: "sidebar",
-  initialState,
-  reducers: {
-    openSidebar(state) {
-      state.open = true;
+    closeSidebar() {
+      set((state) => {
+        state.sidebar.open = false;
+      });
     },
-    closeSidebar(state) {
-      state.open = false;
-    },
-    toggleSidebar(state) {
-      state.open = !state.open;
+
+    toggleSidebar() {
+      set((state) => {
+        state.sidebar.open = !state.sidebar.open;
+      });
     },
   },
 });
 
-export const { openSidebar, closeSidebar, toggleSidebar } = uiSlice.actions;
-
-export const selectSidebarOpen = (state) => state.sidebar.open;
-
-export default uiSlice.reducer;
+export { sidebarStore };

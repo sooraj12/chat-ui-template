@@ -1,45 +1,31 @@
-import { createSlice } from "@reduxjs/toolkit";
+const settingsStore = (set, get) => ({
+  settings: {
+    tab: "",
+    option: "",
 
-const initialState = {
-  tab: "",
-  option: "",
-};
+    setTab(tab) {
+      set((state) => {
+        state.settings.tab = tab;
+      });
+    },
 
-export const settingsUISlice = createSlice({
-  name: "settingsUI",
-  initialState,
-  reducers: {
-    setTab: (state, action) => {
-      state.tab = action.payload || "";
+    setOption(option) {
+      set((state) => {
+        state.settings.tab = option;
+      });
     },
-    setOption: (state, action) => {
-      state.option = action.payload || "";
+
+    setTabAndOption(tab, option) {
+      set((state) => {
+        state.settings.tab = tab;
+        state.settings.option = option;
+      });
     },
-    setTabAndOption: (state, action) => {
-      state.tab = action.payload.tab || "";
-      state.option = action.payload.option || "";
+
+    closeSettingsUI() {
+      get().settings.setTabAndOption("", "");
     },
   },
 });
 
-export const { setTab, setOption, setTabAndOption } = settingsUISlice.actions;
-
-export const closeSettingsUI = () =>
-  settingsUISlice.actions.setTabAndOption({ tab: "", option: "" });
-
-export const selectSettingsTab = (state) => state.settingsUI.tab;
-export const selectSettingsOption = (state) => state.settingsUI.option;
-
-export const openSystemPromptPanel = () =>
-  settingsUISlice.actions.setTabAndOption({
-    tab: "options",
-    option: "systemPrompt",
-  });
-
-export const openTemperaturePanel = () =>
-  settingsUISlice.actions.setTabAndOption({
-    tab: "options",
-    option: "temperature",
-  });
-
-export default settingsUISlice.reducer;
+export { settingsStore };
