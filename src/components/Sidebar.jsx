@@ -108,19 +108,6 @@ function Sidebar() {
 
   const { ref, width } = useElementSize();
 
-  // const [version, setVersion] = useState(0);
-
-  // const update = useCallback(() => {
-  //   setVersion((v) => v + 1);
-  // }, []);
-
-  //   useEffect(() => {
-  //     context.chat.on("update", update);
-  //     return () => {
-  //       context.chat.off("update", update);
-  //     };
-  //   }, []);
-
   const burgerLabel = sidebarOpen ? "Close sidebar" : "Open sidebar";
 
   return (
@@ -163,11 +150,11 @@ function Sidebar() {
 
           <Menu.Divider />
           <Menu.Item
-            color="red"
+            color="green"
             onClick={(e) => e.stopPropagation()}
             icon={<i className="fas fa-sign-out-alt" />}
           >
-            Sign out
+            Sign In
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>

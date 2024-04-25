@@ -73,12 +73,7 @@ function Page({ id, headerProps, children }) {
       <Container>
         <Sidebar />
         <Main key={id}>
-          <Header
-            share={headerProps?.share}
-            canShare={headerProps?.canShare}
-            title={headerProps?.title}
-            onShare={headerProps?.onShare}
-          />
+          <Header title={headerProps?.title} />
           {children}
 
           <MessageInput key={1} />

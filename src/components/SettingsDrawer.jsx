@@ -104,7 +104,6 @@ function SettingsDrawer() {
         <Tabs value={tab} onTabChange={onTabChange} style={{ margin: "0rem" }}>
           <Tabs.List grow={small}>
             <Tabs.Tab value="chat">Chat</Tabs.Tab>
-            <Tabs.Tab value="speech">Speech</Tabs.Tab>
             <Tabs.Tab value="ui">UI</Tabs.Tab>
             <Tabs.Tab value="user">User</Tabs.Tab>
           </Tabs.List>

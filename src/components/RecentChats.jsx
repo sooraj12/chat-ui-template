@@ -6,7 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 // import { toggleSidebar } from "../../store/sidebar";
 import { ActionIcon, Button, Loader, Menu, Textarea } from "@mantine/core";
 import { useModals } from "@mantine/modals";
-// import { backend } from "../../core/backend";
+import { useAppContext } from "../hooks";
+import { useAppDispatch } from "../store";
 
 const Container = styled.div`
   margin: calc(1.618rem - 1rem);
@@ -216,24 +217,13 @@ function ChatListItem({ chat, onClick, selected }) {
   );
 }
 
-const recentChats = [
-  {
-    chatID: 1,
-    title: "New Chat 1",
-  },
-  {
-    chatID: 2,
-    title: "New Chat 2",
-  },
-];
-const synced = true;
-
 function RecentChats() {
-  //   const context = useAppContext();
-  //   const dispatch = useAppDispatch();
+  const context = useAppContext();
+  const dispatch = useAppDispatch();
 
-  //   const currentChatID = context.currentChat.chat?.id;
-  //   const recentChats = context.chat.searchChats("");
+  const currentChatID = context.currentChat.chat?.id;
+  // const recentChats = context.chat.searchChats("");
+  const recentChats = [];
 
   //   const onClick = useCallback(
   //     (e: React.MouseEvent) => {
@@ -259,8 +249,6 @@ function RecentChats() {
   //     }
   //   }, [currentChatID]);
 
-  //   const synced = !backend.current || backend.current?.isSynced();
-
   return (
     <Container>
       {recentChats.length > 0 && (
@@ -275,12 +263,10 @@ function RecentChats() {
           ))}
         </ChatList>
       )}
-      {recentChats.length === 0 && !synced && (
-        <Empty>
-          <Loader size="sm" variant="dots" />
-        </Empty>
-      )}
-      {recentChats.length === 0 && synced && <Empty>No chats yet.</Empty>}
+      <Empty>
+        <Loader size="sm" variant="dots" />
+      </Empty>
+      <Empty>No chats yet.</Empty>
     </Container>
   );
 }

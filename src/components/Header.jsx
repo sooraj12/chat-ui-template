@@ -7,10 +7,8 @@ import { useSpotlight } from "@mantine/spotlight";
 import { useAppDispatch, useAppSelector } from "../store";
 import { selectSidebarOpen, toggleSidebar } from "../store/sidebar";
 import { setTab } from "../store/settings";
-
-const backend = {
-  current: true,
-};
+import { useNavigate } from "react-router-dom";
+import { useHotkeys } from "@mantine/hooks";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -99,9 +97,9 @@ function HeaderButton({ icon, onClick, children }) {
   );
 }
 
-function Header({ title, share, canShare, onShare }) {
+function Header({ title }) {
   const context = useAppContext();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const spotlight = useSpotlight();
   const [loading, setLoading] = useState(false);
   const dispatch = useAppDispatch();
@@ -115,20 +113,18 @@ function Header({ title, share, canShare, onShare }) {
 
   const burgerLabel = sidebarOpen ? "Close sidebar" : "Open sidebar";
 
-  // const onNewChat = useCallback(async () => {
-  //     setLoading(true);
-  //     navigate(`/`);
-  //     setLoading(false);
-  //     setTimeout(() => document.querySelector<HTMLTextAreaElement>('#message-input')?.focus(), 100);
-  // }, [navigate]);
+  const onNewChat = useCallback(async () => {
+    setLoading(true);
+    navigate(`/`);
+    setLoading(false);
+    setTimeout(() => document.querySelector("#message-input")?.focus(), 100);
+  }, [navigate]);
 
   const openSettings = useCallback(() => {
     dispatch(setTab("chat"));
   }, [dispatch]);
 
-  // useHotkeys([
-  //     ['c', onNewChat],
-  // ]);
+  useHotkeys([["c", onNewChat]]);
 
   return (
     <HeaderContainer className={context.isHome ? "shaded" : ""}>
@@ -150,17 +146,10 @@ function Header({ title, share, canShare, onShare }) {
       <div className="spacer" />
       <HeaderButton icon="search" onClick={spotlight.openSpotlight} />
       <HeaderButton icon="gear" onClick={openSettings} />
-      {backend.current &&
-        !share &&
-        canShare &&
-        typeof navigator.share !== "undefined" && (
-          <HeaderButton icon="share" onClick={onShare}>
-            Share
-          </HeaderButton>
-        )}
+      <HeaderButton icon="share">Share</HeaderButton>
       <HeaderButton
         icon="plus"
-        // onClick={onNewChat}
+        onClick={onNewChat}
         loading={loading}
         variant="light"
       >

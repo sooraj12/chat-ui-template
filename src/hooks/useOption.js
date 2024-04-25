@@ -4,39 +4,37 @@ import { useAppContext } from "./useAppContext";
 export function useOption(groupID, optionID, chatID) {
   const context = useAppContext();
 
-  const [value, setValue] = useState(
-    context.chat.options.getValidatedOption(groupID, optionID, chatID)
-  );
+  const [value, setValue] = useState("chat");
   const [version, setVersion] = useState(0);
 
   const timer = useRef();
 
-  const onUpdate = useCallback(
-    (updatedGroupID) => {
-      if (groupID === updatedGroupID) {
-        setValue(
-          context.chat.options.getValidatedOption(groupID, optionID, chatID)
-        );
-        setVersion((v) => v + 1);
-      } else {
-        clearTimeout(timer.current);
-        timer.current = setTimeout(() => {
-          setValue(
-            context.chat.options.getValidatedOption(groupID, optionID, chatID)
-          );
-          setVersion((v) => v + 1);
-        }, 500);
-      }
-    },
-    [groupID, optionID, chatID]
-  );
+  // const onUpdate = useCallback(
+  //   (updatedGroupID) => {
+  //     if (groupID === updatedGroupID) {
+  //       setValue(
+  //         context.chat.options.getValidatedOption(groupID, optionID, chatID)
+  //       );
+  //       setVersion((v) => v + 1);
+  //     } else {
+  //       clearTimeout(timer.current);
+  //       timer.current = setTimeout(() => {
+  //         setValue(
+  //           context.chat.options.getValidatedOption(groupID, optionID, chatID)
+  //         );
+  //         setVersion((v) => v + 1);
+  //       }, 500);
+  //     }
+  //   },
+  //   [groupID, optionID, chatID]
+  // );
 
-  useEffect(() => {
-    context.chat.on("plugin-options-update", onUpdate);
-    return () => {
-      context.chat.off("plugin-options-update", onUpdate);
-    };
-  }, [chatID, onUpdate]);
+  // useEffect(() => {
+  //   context.chat.on("plugin-options-update", onUpdate);
+  //   return () => {
+  //     context.chat.off("plugin-options-update", onUpdate);
+  //   };
+  // }, [chatID, onUpdate]);
 
   const setOptionValue = useCallback(
     (value) => {
@@ -45,7 +43,9 @@ export function useOption(groupID, optionID, chatID) {
     [groupID, optionID, chatID]
   );
 
-  const option = context.chat.options.findOption(groupID, optionID);
+  const option = {
+    renderProps: {},
+  };
 
   return [
     value,
