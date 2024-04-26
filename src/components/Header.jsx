@@ -2,9 +2,8 @@ import { useCallback, useState } from "react";
 import Helmet from "react-helmet";
 import styled from "@emotion/styled";
 import { Burger, Button } from "@mantine/core";
-import { useAppContext } from "../hooks";
 import { useSpotlight } from "@mantine/spotlight";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useHotkeys } from "@mantine/hooks";
 import { useGlobalStore } from "../store/useGlobalStore";
 import { useShallow } from "zustand/react/shallow";
@@ -97,10 +96,11 @@ function HeaderButton({ icon, onClick, children }) {
 }
 
 function Header({ title }) {
-  const context = useAppContext();
   const navigate = useNavigate();
   const spotlight = useSpotlight();
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
+  const isHome = location.pathname === "/";
 
   const { sidebarOpen, toggleSidebar, setTab } = useGlobalStore(
     useShallow((state) => ({
@@ -128,7 +128,7 @@ function Header({ title }) {
   useHotkeys([["c", onNewChat]]);
 
   return (
-    <HeaderContainer className={context.isHome ? "shaded" : ""}>
+    <HeaderContainer className={isHome ? "shaded" : ""}>
       <Helmet>
         <title>
           {title ? `${title} - ` : ""}
@@ -143,7 +143,7 @@ function Header({ title }) {
           transitionDuration={0}
         />
       )}
-      {context.isHome && <h2>RAGChat - {context.llmName}</h2>}
+      {isHome && <h2>RAGChat</h2>}
       <div className="spacer" />
       <HeaderButton icon="search" onClick={spotlight.openSpotlight} />
       <HeaderButton icon="gear" onClick={openSettings} />

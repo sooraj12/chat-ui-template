@@ -3,7 +3,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ActionIcon, Button, Loader, Menu, Textarea } from "@mantine/core";
 import { useModals } from "@mantine/modals";
-import { useAppContext } from "../hooks";
+import { useGlobalStore } from "../store/useGlobalStore";
+import { useShallow } from "zustand/react/shallow";
 
 const Container = styled.div`
   margin: calc(1.618rem - 1rem);
@@ -69,7 +70,6 @@ const ChatListItemLink = styled(Link)`
 
 function ChatListItem({ chat, onClick, selected }) {
   const c = chat;
-  //   const context = useAppContext();
   const modals = useModals();
   //   const navigate = useNavigate();
 
@@ -214,9 +214,11 @@ function ChatListItem({ chat, onClick, selected }) {
 }
 
 function RecentChats() {
-  const context = useAppContext();
-
-  const currentChatID = context.currentChat.chat?.id;
+  const { currentChatID } = useGlobalStore(
+    useShallow((state) => ({
+      currentChatID: state.chats.activeId,
+    }))
+  );
   // const recentChats = context.chat.searchChats("");
   const recentChats = [];
 

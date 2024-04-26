@@ -3,8 +3,7 @@ import { Button, ActionIcon, Textarea, Loader } from "@mantine/core";
 import { getHotkeyHandler, useHotkeys, useMediaQuery } from "@mantine/hooks";
 import { useCallback, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAppContext, useOption } from "../hooks";
-import { QuickSettings } from "./QuickSettings";
+import { useOption } from "../hooks";
 import { useGlobalStore } from "../store/useGlobalStore";
 import { useShallow } from "zustand/react/shallow";
 
@@ -27,19 +26,20 @@ const Container = styled.div`
 `;
 
 function MessageInput(props) {
-  const { setMessage, message, tab } = useGlobalStore(
+  const { setMessage, message, sendMessage, generating } = useGlobalStore(
     useShallow((state) => ({
-      setMessage: state.message.setMessage,
-      message: state.message.msg,
-      tab: state.settings.tab,
+      setMessage: state.chats.setMessage,
+      message: state.chats.msg,
+      sendMessage: state.chats.sendMessage,
+      generating: state.chats.generating,
     }))
   );
+  const location = useLocation();
+  const isHome = location.pathname === "/";
 
   const hasVerticalSpace = useMediaQuery("(min-height: 1000px)");
 
   const navigate = useNavigate();
-  const context = useAppContext();
-  const location = useLocation();
 
   const [submitOnEnter] = useOption("input", "submit-on-enter");
 
@@ -50,10 +50,8 @@ function MessageInput(props) {
     [setMessage]
   );
 
-  const pathname = useLocation().pathname;
-
   const onSubmit = useCallback(async () => {
-    const id = await context.onNewMessage(message);
+    const id = await sendMessage(message);
 
     if (id) {
       if (!location.pathname.includes(id)) {
@@ -61,15 +59,13 @@ function MessageInput(props) {
       }
       setMessage("");
     }
-  }, [context, message, navigate, location.pathname, setMessage]);
+  }, [message, navigate, location.pathname, setMessage, sendMessage]);
 
   useHotkeys([["n", () => document.querySelector("#message-input")?.focus()]]);
 
   const blur = useCallback(() => {
     document.querySelector("#message-input")?.blur();
   }, []);
-
-  const disabled = context.generating;
 
   const rightSection = useMemo(() => {
     return (
@@ -83,25 +79,15 @@ function MessageInput(props) {
           width: "100%",
         }}
       >
-        {context.generating && (
+        {generating && (
           <>
-            <Button
-              variant="subtle"
-              size="xs"
-              compact
-              onClick={() => {
-                context.chat.cancelReply(
-                  context.currentChat.chat?.id,
-                  context.currentChat.leaf?.id
-                );
-              }}
-            >
+            <Button variant="subtle" size="xs" compact onClick={() => {}}>
               Cancel
             </Button>
             <Loader size="xs" style={{ padding: "0 0.8rem 0 0.5rem" }} />
           </>
         )}
-        {!context.generating && (
+        {!generating && (
           <>
             <ActionIcon size="xl" onClick={onSubmit}>
               <i className="fa fa-paper-plane" style={{ fontSize: "90%" }} />
@@ -110,7 +96,7 @@ function MessageInput(props) {
         )}
       </div>
     );
-  }, [onSubmit, context.generating, context.chat, context.currentChat]);
+  }, [onSubmit, generating]);
 
   const hotkeyHandler = useMemo(() => {
     const keys = [
@@ -124,28 +110,22 @@ function MessageInput(props) {
     return handler;
   }, [onSubmit, blur, submitOnEnter]);
 
-  const isLandingPage = pathname === "/";
-  if (!isLandingPage && !context.id) {
-    return null;
-  }
-
   return (
     <Container>
       <div className="inner">
         <Textarea
-          disabled={props.disabled || disabled}
+          disabled={props.disabled || generating}
           id="message-input"
           autosize
-          minRows={hasVerticalSpace || context.isHome ? 3 : 2}
+          minRows={hasVerticalSpace || isHome ? 3 : 2}
           maxRows={12}
           placeholder={"Ask a question..."}
           value={message}
           onChange={onChange}
           rightSection={rightSection}
-          rightSectionWidth={context.generating ? 100 : 55}
+          rightSectionWidth={generating ? 100 : 55}
           onKeyDown={hotkeyHandler}
         />
-        <QuickSettings key={tab} />
       </div>
     </Container>
   );

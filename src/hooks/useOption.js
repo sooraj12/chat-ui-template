@@ -1,27 +1,31 @@
 import { useCallback, useState } from "react";
-import { useAppContext } from ".";
+import { useGlobalStore } from "../store/useGlobalStore";
+import { useShallow } from "zustand/react/shallow";
 
 export function useOption(groupID, optionID, chatID) {
-  const context = useAppContext();
-
+  const { chatManager } = useGlobalStore(
+    useShallow((state) => ({
+      chatManager: state.chats.chatManager,
+    }))
+  );
   const [value, setValue] = useState(
-    context.chat.options.getValidatedOption(groupID, optionID, chatID)
+    chatManager.options.getValidatedOption(groupID, optionID, chatID)
   );
 
   const setOptionValue = useCallback(
     (value) => {
-      context.chat.options.setOption(groupID, optionID, value, chatID);
+      chatManager.options.setOption(groupID, optionID, value, chatID);
     },
     [groupID, optionID, chatID]
   );
 
-  const option = context.chat.options.findOption(groupID, optionID);
+  const option = chatManager.options.findOption(groupID, optionID);
 
   return [
     value,
     setOptionValue,
     typeof option.renderProps === "function"
-      ? option.renderProps(value, context.chat.options, context)
+      ? option.renderProps(value, chatManager.options, chatManager)
       : option.renderProps,
   ];
 }

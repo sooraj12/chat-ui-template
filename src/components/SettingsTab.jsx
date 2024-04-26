@@ -11,7 +11,7 @@ import {
   TextInput,
   Textarea,
 } from "@mantine/core";
-import { useAppContext, useOption } from "../hooks";
+import { useOption } from "../hooks";
 import { SettingsOption } from "./SettingsOption";
 import { globalOptions } from "../config/globalOptions";
 import { pluginMetadata } from "../config/plugins/metadata";
@@ -92,7 +92,7 @@ const OptionWrapper = styled.div`
   }
 `;
 
-function PluginOptionWidget({ pluginID, option, chatID, context }) {
+function PluginOptionWidget({ pluginID, option, chatID }) {
   const { requestedOption } = useGlobalStore(
     useShallow((state) => ({
       requestedOption: state.settings.option,
@@ -264,8 +264,13 @@ function PluginOptionWidget({ pluginID, option, chatID, context }) {
 }
 
 function SettingsTab({ name, children }) {
-  const context = useAppContext();
-
+  const { activeId, options, chatManager } = useGlobalStore(
+    useShallow((state) => ({
+      activeId: state.chats.activeId,
+      options: state.chats.chatManager.options,
+      chatManager: state.chats.chatManager,
+    }))
+  );
   const optionSets = [...globalOptions, ...pluginMetadata]
     .map((metadata) => ({
       id: metadata.id,
@@ -288,7 +293,7 @@ function SettingsTab({ name, children }) {
         ).length > 0,
       hidden:
         typeof metadata.hidden === "function"
-          ? metadata.hidden(context.chat.options)
+          ? metadata.hidden(options)
           : metadata.hidden,
     }))
     .filter(({ options, hidden }) => options.length && !hidden);
@@ -310,8 +315,7 @@ function SettingsTab({ name, children }) {
                   <PluginOptionWidget
                     pluginID={id}
                     option={o}
-                    chatID={context.id}
-                    context={context}
+                    chatID={activeId}
                     key={id + "." + o.id}
                   />
                 ))}
@@ -328,7 +332,7 @@ function SettingsTab({ name, children }) {
                       compact
                       variant="light"
                       onClick={() =>
-                        context.chat.resetPluginOptions(id, context.id)
+                        chatManager.resetPluginOptions(id, activeId)
                       }
                     >
                       Reset to default
