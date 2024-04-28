@@ -214,13 +214,13 @@ function ChatListItem({ chat, onClick, selected }) {
 }
 
 function RecentChats() {
-  const { currentChatID } = useGlobalStore(
+  const { activeId, recentChats, isLoading } = useGlobalStore(
     useShallow((state) => ({
-      currentChatID: state.chats.activeId,
+      activeId: state.chats.activeId,
+      recentChats: state.chats.history,
+      isLoading: state.chats.isLoading,
     }))
   );
-  // const recentChats = context.chat.searchChats("");
-  const recentChats = [];
 
   //   const onClick = useCallback(
   //     (e: React.MouseEvent) => {
@@ -252,18 +252,21 @@ function RecentChats() {
         <ChatList>
           {recentChats.map((c) => (
             <ChatListItem
-              key={c.chatID}
+              key={c.id}
               chat={c}
               //   onClick={onClick}
-              //   selected={c.chatID === currentChatID}
+              selected={c.id === activeId}
             />
           ))}
         </ChatList>
       )}
-      <Empty>
-        <Loader size="sm" variant="dots" />
-      </Empty>
-      <Empty>No chats yet.</Empty>
+      {isLoading ? (
+        <Empty>
+          <Loader size="sm" variant="dots" />
+        </Empty>
+      ) : (
+        <Empty>No chats yet.</Empty>
+      )}
     </Container>
   );
 }

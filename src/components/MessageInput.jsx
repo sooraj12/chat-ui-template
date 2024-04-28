@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useOption } from "../hooks";
 import { useGlobalStore } from "../store/useGlobalStore";
 import { useShallow } from "zustand/react/shallow";
+import { v4 as uuidv4 } from "uuid";
 
 const Container = styled.div`
   background: #292933;
@@ -26,14 +27,16 @@ const Container = styled.div`
 `;
 
 function MessageInput(props) {
-  const { setMessage, message, sendMessage, generating } = useGlobalStore(
-    useShallow((state) => ({
-      setMessage: state.chats.setMessage,
-      message: state.chats.msg,
-      sendMessage: state.chats.sendMessage,
-      generating: state.chats.generating,
-    }))
-  );
+  const { setMessage, message, sendMessage, generating, activeId } =
+    useGlobalStore(
+      useShallow((state) => ({
+        setMessage: state.chats.setMessage,
+        message: state.chats.activeChat.msg,
+        sendMessage: state.chats.sendMessage,
+        generating: state.chats.generating,
+        activeId: state.chats.activeId,
+      }))
+    );
   const location = useLocation();
   const isHome = location.pathname === "/";
 
@@ -51,17 +54,21 @@ function MessageInput(props) {
   );
 
   const onSubmit = useCallback(async () => {
-    const id = await sendMessage(message);
-
-    if (id) {
-      if (!location.pathname.includes(id)) {
-        navigate("/chat/" + id);
-      }
-      setMessage("");
+    if (!message?.trim().length) {
+      return false;
     }
-  }, [message, navigate, location.pathname, setMessage, sendMessage]);
 
-  useHotkeys([["n", () => document.querySelector("#message-input")?.focus()]]);
+    const chatId = activeId ? activeId : uuidv4();
+
+    if (!location.pathname.includes(chatId)) {
+      navigate("/chat/" + chatId);
+    }
+    setMessage("");
+
+    await sendMessage(message, chatId);
+  }, [message, navigate, location.pathname, setMessage, sendMessage, activeId]);
+
+  useHotkeys([["c", () => document.querySelector("#message-input")?.focus()]]);
 
   const blur = useCallback(() => {
     document.querySelector("#message-input")?.blur();

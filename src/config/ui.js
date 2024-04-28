@@ -4,7 +4,7 @@ export const autoScrollOptions = {
   options: [
     {
       id: "auto-scroll-when-opening-chat",
-      defaultValue: false,
+      defaultValue: true,
       displayOnSettingsScreen: "ui",
       displayAsSeparateSection: false,
       renderProps: {

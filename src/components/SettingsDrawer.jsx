@@ -45,7 +45,7 @@ const Container = styled.div`
 
   .mantine-Tabs-panel {
     flex-grow: 1;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
     min-height: 0;
     margin-left: 0;

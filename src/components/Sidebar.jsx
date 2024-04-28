@@ -31,7 +31,7 @@ const Container = styled.div`
 
   .sidebar-content {
     flex-grow: 1;
-    overflow-y: scroll;
+    overflow-y: auto;
 
     /* hide scrollbars */
     &::-webkit-scrollbar {

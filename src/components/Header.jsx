@@ -125,14 +125,14 @@ function Header({ title }) {
     setTab("chat");
   }, [setTab]);
 
-  useHotkeys([["c", onNewChat]]);
+  useHotkeys([["n", onNewChat]]);
 
   return (
     <HeaderContainer className={isHome ? "shaded" : ""}>
       <Helmet>
         <title>
           {title ? `${title} - ` : ""}
-          RAGChat
+          Chat
         </title>
       </Helmet>
       {!sidebarOpen && (
@@ -143,11 +143,10 @@ function Header({ title }) {
           transitionDuration={0}
         />
       )}
-      {isHome && <h2>RAGChat</h2>}
+      {isHome || !title ? <h2>Chat</h2> : <h2>{title}</h2>}
       <div className="spacer" />
       <HeaderButton icon="search" onClick={spotlight.openSpotlight} />
       <HeaderButton icon="gear" onClick={openSettings} />
-      <HeaderButton icon="share">Share</HeaderButton>
       <HeaderButton
         icon="plus"
         onClick={onNewChat}
