@@ -5,6 +5,7 @@ import { ActionIcon, Button, Loader, Menu, Textarea } from "@mantine/core";
 import { useModals } from "@mantine/modals";
 import { useGlobalStore } from "../store/useGlobalStore";
 import { useShallow } from "zustand/react/shallow";
+import axios from "axios";
 
 const Container = styled.div`
   margin: calc(1.618rem - 1rem);
@@ -65,7 +66,7 @@ const ChatListItemLink = styled(Link)`
     .mantine-ActionIcon-root {
       opacity: 1;
     }
-  }
+
 `;
 
 function ChatListItem({ chat, onClick, selected }) {
@@ -169,7 +170,6 @@ function ChatListItem({ chat, onClick, selected }) {
   //     e.stopPropagation();
   //     setMenuOpen((open) => !open);
   //   }, []);
-
   return (
     <ChatListItemLink
       to={"/chat/" + c.chatID}
@@ -222,6 +222,16 @@ function RecentChats() {
     }))
   );
 
+  const [fullHistory, setFullHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+
+  function fetchChatHistory() {
+    setLoadingHistory(true);
+    axios.get("http://localhost:8880/api/v1/chats/").then((res) => {
+      setFullHistory(() => setFullHistory(res.data.data.chatHistory));
+      setLoadingHistory(false);
+    });
+  }
   //   const onClick = useCallback(
   //     (e: React.MouseEvent) => {
   //       if (e.currentTarget.closest("button")) {
@@ -246,6 +256,10 @@ function RecentChats() {
   //     }
   //   }, [currentChatID]);
 
+  useEffect(() => {
+    fetchChatHistory();
+  }, []);
+
   return (
     <Container>
       {recentChats.length > 0 && (
@@ -260,12 +274,39 @@ function RecentChats() {
           ))}
         </ChatList>
       )}
-      {isLoading ? (
+      {loadingHistory ? (
         <Empty>
           <Loader size="sm" variant="dots" />
         </Empty>
       ) : (
-        <Empty>No chats yet.</Empty>
+        <div
+          style={{
+            marginTop: "20px",
+          }}
+        >
+          {fullHistory && fullHistory.length > 0 ? (
+            fullHistory.map((val) => {
+              return (
+                <div
+                  key={val.id}
+                  className="history--single"
+                  style={{
+                    width: "100%",
+                    height: "30px",
+                    marginTop: "5px",
+                    fontSize: "16px",
+                    paddingLeft: "10px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <p style={{ textAlign: "start" }}>{val.question}</p>
+                </div>
+              );
+            })
+          ) : (
+            <div>No Previous Searches</div>
+          )}
+        </div>
       )}
     </Container>
   );
