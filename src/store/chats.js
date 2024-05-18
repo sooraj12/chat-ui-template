@@ -104,7 +104,7 @@ const chatsStore = (set, get) => ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            query: msg,
+            question: msg,
           }),
           onopen(res) {
             if (res.ok && res.status === 200) {
